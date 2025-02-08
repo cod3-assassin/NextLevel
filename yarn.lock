@@ -2431,6 +2431,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native/gradle-plugin@npm:^0.77.0":
+  version: 0.77.0
+  resolution: "@react-native/gradle-plugin@npm:0.77.0"
+  checksum: 99ecebc35c8fb5e8dcd4cc86044694f88646b5d128f6cbe01da1b91046826cd40f5e3d40e40036e748ba9c8e8038c7a8ae9cd56ad6c1a10118f08f3789719983
+  languageName: node
+  linkType: hard
+
 "@react-native/js-polyfills@npm:0.76.5":
   version: 0.76.5
   resolution: "@react-native/js-polyfills@npm:0.76.5"
@@ -3011,6 +3018,7 @@ __metadata:
     "@react-native-community/push-notification-ios": ^1.11.0
     "@react-native/babel-preset": 0.76.5
     "@react-native/eslint-config": 0.76.5
+    "@react-native/gradle-plugin": ^0.77.0
     "@react-native/metro-config": 0.76.5
     "@react-native/typescript-config": 0.76.5
     "@react-navigation/bottom-tabs": ^7.2.0
