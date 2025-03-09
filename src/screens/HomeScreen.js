@@ -1,545 +1,654 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, Image } from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Dimensions,
+  Image,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { PieChart } from 'react-native-chart-kit';
-
+import {ProgressBar} from 'react-native-paper';
+import {PieChart, BarChart, LineChart} from 'react-native-chart-kit';
+import WeeklyProgressTimeline from '../components/WeeklyProgressTimeline';
 
 const screenWidth = Dimensions.get('window').width;
 
-
 const HomeScreen = () => {
-    const navigation = useNavigation();
-    const [progress, setProgress] = useState(0.65); // Dummy progress data
-    const weeklyGoals = [1, 1, 1, 1, 1, 0, 0]; // 1 = completed, 0 = not completed
-
-    // Dummy user data
-    const userName = "John"; // Replace with dynamic user data in real-world applications
-
-    // Time-based greeting
-    const getGreeting = () => {
-        const hour = new Date().getHours();
-        if (hour < 12) return "Good Morning";
-        if (hour < 18) return "Good Afternoon";
-        return "Good Evening";
-    };
-
-    // Dummy data for activity cards
-    const activityData = [
+  const navigation = useNavigation();
+  const [waterProgress, setWaterProgress] = useState(0.5); // Water intake progress
+  const weeklyProgressData = [
+    {
+      date: '2025-03-01',
+      day: 'Monday',
+      tasks: [
         {
-            title: 'Food',
-            time: 'Aug 12 • 7:35 pm',
-            details: [
-                { label: '10 min', icon: 'timer-outline' },
-                { label: '240 calories', icon: 'flame-outline' },
-                { label: '120 avg bpm', icon: 'heart-outline' },
-                { label: '2 zone min', icon: 'pulse-outline' },
-            ],
-            icon: 'restaurant-outline',
-            iconColor: '#f39c12',
+          id: '1',
+          title: 'Food Tracking',
+          description: 'Logged meals and snacks.',
+          progress: 0.6,
+          icon: 'restaurant-outline',
+          color: '#f39c12',
         },
         {
-            title: 'Walk',
-            time: 'Aug 12 • 7:35 pm',
-            details: [
-                { label: '20 min', icon: 'timer-outline' },
-                { label: '350 calories', icon: 'flame-outline' },
-                { label: '115 avg bpm', icon: 'heart-outline' },
-                { label: '3 zone min', icon: 'pulse-outline' },
-            ],
-            icon: 'walk-outline',
-            iconColor: '#27ae60',
+          id: '2',
+          title: 'Exercise Routine',
+          description: 'Completed 30-minute workout.',
+          progress: 0.8,
+          icon: 'barbell-outline',
+          color: '#e74c3c',
         },
         {
-            title: 'Exercise',
-            time: 'Aug 12 • 7:35 pm',
-            details: [
-                { label: '30 min', icon: 'timer-outline' },
-                { label: '400 calories', icon: 'flame-outline' },
-                { label: '130 avg bpm', icon: 'heart-outline' },
-                { label: '5 zone min', icon: 'pulse-outline' },
-            ],
-            icon: 'barbell-outline',
-            iconColor: '#e74c3c',
-        },
-    ];
-
-    const data = [
-        {
-            name: "Steps",
-            population: 800,
-            color: "#3498db",
-            legendFontColor: "#7F7F7F",
-            legendFontSize: 12,
-            icon: "https://img.icons8.com/ios-filled/50/walking.png",
+          id: '3',
+          title: 'Water Intake',
+          description: 'Drank 2 liters of water.',
+          progress: 0.5,
+          icon: 'water-outline',
+          color: '#3498db',
         },
         {
-            name: "Calories Burned",
-            population: 500,
-            color: "#e74c3c",
-            legendFontColor: "#7F7F7F",
-            legendFontSize: 12,
-            icon: 'flame-outline',  // Icon for Calories
+          id: '4',
+          title: 'Study Goals',
+          description: 'Completed 2 hours of study.',
+          progress: 0.7,
+          icon: 'book-outline',
+          color: '#9b59b6',
+        },
+      ],
+      completedTasks: 4,
+      totalTasks: 4,
+      mood: 'Positive',
+      notes: 'Had a productive day, but need to drink more water.',
+    },
+    {
+      date: '2025-03-02',
+      day: 'Tuesday',
+      tasks: [
+        {
+          id: '1',
+          title: 'Food Tracking',
+          description: 'Logged meals and snacks.',
+          progress: 0.7,
+          icon: 'restaurant-outline',
+          color: '#f39c12',
         },
         {
-            name: "Active Minutes",
-            population: 120,
-            color: "#2ecc71",
-            legendFontColor: "#7F7F7F",
-            legendFontSize: 12,
-            icon: 'timer-outline',  // Icon for Active Minutes
+          id: '2',
+          title: 'Exercise Routine',
+          description: 'Completed 45-minute workout.',
+          progress: 0.9,
+          icon: 'barbell-outline',
+          color: '#e74c3c',
         },
         {
-            name: "Exercise Sessions",
-            population: 50,
-            color: "#f39c12",
-            legendFontColor: "#7F7F7F",
-            legendFontSize: 12,
-            icon: 'fitness-outline', // Icon for Exercise Sessions
-            legendIcon: 'fitness-outline',
+          id: '3',
+          title: 'Water Intake',
+          description: 'Drank 2.5 liters of water.',
+          progress: 0.8,
+          icon: 'water-outline',
+          color: '#3498db',
         },
         {
-            name: "Exercise Sessions",
-            population: 50,
-            color: "#f39c12",
-            legendFontColor: "#7F7F7F",
-            legendFontSize: 12,
-            icon: 'fitness-outline', // Icon for Exercise Sessions
-            legendIcon: 'fitness-outline',
+          id: '4',
+          title: 'Study Goals',
+          description: 'Completed 1.5 hours of study.',
+          progress: 0.6,
+          icon: 'book-outline',
+          color: '#9b59b6',
         },
-        ,
         {
-            name: "Exercise Sessions",
-            population: 50,
-            color: "#f39c12",
-            legendFontColor: "#7F7F7F",
-            legendFontSize: 12,
-            icon: 'fitness-outline', // Icon for Exercise Sessions
-            legendIcon: 'fitness-outline',
+          id: '5',
+          title: 'Sleep',
+          description: 'Slept for 7 hours.',
+          progress: 1.0,
+          icon: 'bed-outline',
+          color: '#2ecc71',
         },
-        ,
+      ],
+      completedTasks: 5,
+      totalTasks: 5,
+      mood: 'Neutral',
+      notes: 'Could’ve slept a bit more, but felt good after the workout.',
+    },
+    {
+      date: '2025-03-03',
+      day: 'Wednesday',
+      tasks: [
         {
-            name: "Exercise Sessions",
-            population: 50,
-            color: "#f39c12",
-            legendFontColor: "#7F7F7F",
-            legendFontSize: 12,
-            icon: 'fitness-outline', // Icon for Exercise Sessions
-            legendIcon: 'fitness-outline',
+          id: '1',
+          title: 'Food Tracking',
+          description: 'Logged meals and snacks.',
+          progress: 0.5,
+          icon: 'restaurant-outline',
+          color: '#f39c12',
         },
+        {
+          id: '2',
+          title: 'Exercise Routine',
+          description: 'Completed 30-minute workout.',
+          progress: 0.6,
+          icon: 'barbell-outline',
+          color: '#e74c3c',
+        },
+        {
+          id: '3',
+          title: 'Water Intake',
+          description: 'Drank 2 liters of water.',
+          progress: 0.7,
+          icon: 'water-outline',
+          color: '#3498db',
+        },
+        {
+          id: '4',
+          title: 'Study Goals',
+          description: 'Completed 3 hours of study.',
+          progress: 0.9,
+          icon: 'book-outline',
+          color: '#9b59b6',
+        },
+        {
+          id: '5',
+          title: 'Sleep',
+          description: 'Slept for 6 hours.',
+          progress: 0.8,
+          icon: 'bed-outline',
+          color: '#2ecc71',
+        },
+      ],
+      completedTasks: 5,
+      totalTasks: 5,
+      mood: 'Good',
+      notes: 'Had a good balance between work and rest.',
+    },
+    {
+      date: '2025-03-04',
+      day: 'Thursday',
+      tasks: [
+        {
+          id: '1',
+          title: 'Food Tracking',
+          description: 'Logged meals and snacks.',
+          progress: 0.9,
+          icon: 'restaurant-outline',
+          color: '#f39c12',
+        },
+        {
+          id: '2',
+          title: 'Exercise Routine',
+          description: 'Completed 1-hour workout.',
+          progress: 0.8,
+          icon: 'barbell-outline',
+          color: '#e74c3c',
+        },
+        {
+          id: '3',
+          title: 'Water Intake',
+          description: 'Drank 3 liters of water.',
+          progress: 0.9,
+          icon: 'water-outline',
+          color: '#3498db',
+        },
+        {
+          id: '4',
+          title: 'Study Goals',
+          description: 'Completed 2 hours of study.',
+          progress: 0.7,
+          icon: 'book-outline',
+          color: '#9b59b6',
+        },
+        {
+          id: '5',
+          title: 'Sleep',
+          description: 'Slept for 8 hours.',
+          progress: 1.0,
+          icon: 'bed-outline',
+          color: '#2ecc71',
+        },
+      ],
+      completedTasks: 5,
+      totalTasks: 5,
+      mood: 'Great',
+      notes: 'Felt super energized today.',
+    },
+    {
+      date: '2025-03-05',
+      day: 'Friday',
+      tasks: [
+        {
+          id: '1',
+          title: 'Food Tracking',
+          description: 'Logged meals and snacks.',
+          progress: 0.8,
+          icon: 'restaurant-outline',
+          color: '#f39c12',
+        },
+        {
+          id: '2',
+          title: 'Exercise Routine',
+          description: 'Completed 30-minute workout.',
+          progress: 0.9,
+          icon: 'barbell-outline',
+          color: '#e74c3c',
+        },
+        {
+          id: '3',
+          title: 'Water Intake',
+          description: 'Drank 2.5 liters of water.',
+          progress: 0.8,
+          icon: 'water-outline',
+          color: '#3498db',
+        },
+        {
+          id: '4',
+          title: 'Study Goals',
+          description: 'Completed 3 hours of study.',
+          progress: 1.0,
+          icon: 'book-outline',
+          color: '#9b59b6',
+        },
+        {
+          id: '5',
+          title: 'Sleep',
+          description: 'Slept for 7 hours.',
+          progress: 0.9,
+          icon: 'bed-outline',
+          color: '#2ecc71',
+        },
+      ],
+      completedTasks: 5,
+      totalTasks: 5,
+      mood: 'Good',
+      notes: 'Enjoyed the workout, need to push myself more next week.',
+    },
+    {
+      date: '2025-03-06',
+      day: 'Saturday',
+      tasks: [
+        {
+          id: '1',
+          title: 'Food Tracking',
+          description: 'Logged meals and snacks.',
+          progress: 0.7,
+          icon: 'restaurant-outline',
+          color: '#f39c12',
+        },
+        {
+          id: '2',
+          title: 'Exercise Routine',
+          description: 'Completed 45-minute workout.',
+          progress: 0.8,
+          icon: 'barbell-outline',
+          color: '#e74c3c',
+        },
+        {
+          id: '3',
+          title: 'Water Intake',
+          description: 'Drank 2 liters of water.',
+          progress: 0.6,
+          icon: 'water-outline',
+          color: '#3498db',
+        },
+        {
+          id: '4',
+          title: 'Study Goals',
+          description: 'Completed 2 hours of study.',
+          progress: 0.7,
+          icon: 'book-outline',
+          color: '#9b59b6',
+        },
+        {
+          id: '5',
+          title: 'Sleep',
+          description: 'Slept for 6 hours.',
+          progress: 0.7,
+          icon: 'bed-outline',
+          color: '#2ecc71',
+        },
+      ],
+      completedTasks: 5,
+      totalTasks: 5,
+      mood: 'Neutral',
+      notes: 'Felt a bit tired after the workout, but made progress in study.',
+    },
+    {
+      date: '2025-03-07',
+      day: 'Sunday',
+      tasks: [
+        {
+          id: '1',
+          title: 'Food Tracking',
+          description: 'Logged meals and snacks.',
+          progress: 0.8,
+          icon: 'restaurant-outline',
+          color: '#f39c12',
+        },
+        {
+          id: '2',
+          title: 'Exercise Routine',
+          description: 'Completed 1-hour workout.',
+          progress: 1.0,
+          icon: 'barbell-outline',
+          color: '#e74c3c',
+        },
+        {
+          id: '3',
+          title: 'Water Intake',
+          description: 'Drank 3 liters of water.',
+          progress: 1.0,
+          icon: 'water-outline',
+          color: '#3498db',
+        },
+        {
+          id: '4',
+          title: 'Study Goals',
+          description: 'Completed 1 hour of study.',
+          progress: 0.5,
+          icon: 'book-outline',
+          color: '#9b59b6',
+        },
+        {
+          id: '5',
+          title: 'Sleep',
+          description: 'Slept for 8 hours.',
+          progress: 1.0,
+          icon: 'bed-outline',
+          color: '#2ecc71',
+        },
+      ],
+      completedTasks: 5,
+      totalTasks: 5,
+      mood: 'Excellent',
+      notes: 'Great end to the week, feeling accomplished!',
+    },
+  ];
 
-    ];
+  const weeklyData = [
+    {
+      date: 'Mon',
+      completedTasks: 5,
+      totalTasks: 7,
+      tasks: [
+        {icon: 'restaurant-outline', color: '#f39c12'},
+        {icon: 'barbell-outline', color: '#e74c3c'},
+      ],
+    },
+    {
+      date: 'Tue',
+      completedTasks: 4,
+      totalTasks: 6,
+      tasks: [
+        {icon: 'book-outline', color: '#9b59b6'},
+        {icon: 'water-outline', color: '#3498db'},
+      ],
+    },
+    {
+      date: 'Wed',
+      completedTasks: 6,
+      totalTasks: 8,
+      tasks: [
+        {icon: 'barbell-outline', color: '#e74c3c'},
+        {icon: 'water-outline', color: '#3498db'},
+        {icon: 'book-outline', color: '#9b59b6'},
+      ],
+    },
+    {
+      date: 'Thu',
+      completedTasks: 3,
+      totalTasks: 5,
+      tasks: [
+        {icon: 'restaurant-outline', color: '#f39c12'},
+        {icon: 'book-outline', color: '#9b59b6'},
+      ],
+    },
+    {
+      date: 'Fri',
+      completedTasks: 7,
+      totalTasks: 7,
+      tasks: [
+        {icon: 'water-outline', color: '#3498db'},
+        {icon: 'restaurant-outline', color: '#f39c12'},
+      ],
+    },
+    {
+      date: 'Sat',
+      completedTasks: 2,
+      totalTasks: 4,
+      tasks: [
+        {icon: 'barbell-outline', color: '#e74c3c'},
+        {icon: 'book-outline', color: '#9b59b6'},
+      ],
+    },
+    {
+      date: 'Sun',
+      completedTasks: 6,
+      totalTasks: 7,
+      tasks: [
+        {icon: 'restaurant-outline', color: '#f39c12'},
+        {icon: 'water-outline', color: '#3498db'},
+      ],
+    },
+  ];
 
+  const [monthlyProgress, setMonthlyProgress] = useState([
+    30, 40, 50, 60, 70, 75, 80,
+  ]); // Dummy monthly data
 
+  const userName = 'John';
 
-    const chartConfig = {
-        backgroundColor: '#fff',
-        backgroundGradientFrom: '#fff',
-        backgroundGradientTo: '#fff',
-        decimalPlaces: 1,
-        color: (opacity = 1) => `rgba(34, 193, 195, ${opacity})`,
-        labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-        style: { borderRadius: 16 },
-        propsForDots: { r: '0' }, // Hide default dots
-        icon: 'fitness-outline',
-    };
-    return (
-        <ScrollView style={styles.container}>
-            <View style={styles.headerContainer}>
-                <View style={styles.greetingSection}>
-                    <Text style={styles.greeting}>{getGreeting()},</Text>
-                    <Text style={styles.userName}>{userName} 👋</Text>
-                </View>
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good Morning';
+    if (hour < 18) return 'Good Afternoon';
+    return 'Good Evening';
+  };
 
-                {/* Monthly Goal */}
+  const taskData = [
+    {
+      id: '1',
+      title: 'Track Food',
+      description: 'Log meals and snacks.',
+      progress: 0.6,
+      icon: 'restaurant-outline',
+      color: '#f39c12',
+      lastDate: 'Feb 10, 2025',
+    },
+    {
+      id: '2',
+      title: 'Exercise Routine',
+      description: 'Complete today’s workout.',
+      progress: 0.8,
+      icon: 'barbell-outline',
+      color: '#e74c3c',
+      lastDate: 'Feb 11, 2025',
+    },
+    {
+      id: '3',
+      title: 'Drink Water',
+      description: 'Stay hydrated with 8 glasses.',
+      progress: 0.5,
+      icon: 'water-outline',
+      color: '#3498db',
+      lastDate: 'Feb 9, 2025',
+    },
+    {
+      id: '4',
+      title: 'Study Plan',
+      description: 'Focus on today’s study goals.',
+      progress: 0.7,
+      icon: 'book-outline',
+      color: '#9b59b6',
+      lastDate: 'Feb 12, 2025',
+    },
+  ];
 
+  const chartData = [
+    {name: 'Food', population: 30, color: '#f39c12'},
+    {name: 'Exercise', population: 20, color: '#e74c3c'},
+    {name: 'Water', population: 25, color: '#3498db'},
+    {name: 'Study', population: 25, color: '#9b59b6'},
+  ];
 
+  const chartConfig = {
+    backgroundColor: '#fff',
+    backgroundGradientFrom: '#fff',
+    backgroundGradientTo: '#fff',
+    decimalPlaces: 1,
+    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+    propsForDots: {r: '5'},
+  };
 
-                <View style={styles.profileSection}>
-                    <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
-                        <Icon name="notifications-outline" size={26} color="#555" style={styles.notificationIcon} />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-                        <Image
-                            source={{ uri: 'https://randomuser.me/api/portraits/men/1.jpg' }}
-                            style={styles.profileImage}
-                        />
-                    </TouchableOpacity>
-
-                </View>
+  return (
+    <FlatList
+      style={{padding: 15}}
+      ListHeaderComponent={
+        <View style={styles.container}>
+          {/* Header */}
+          <View style={styles.header}>
+            <View>
+              <Text style={styles.greeting}>{getGreeting()},</Text>
+              <Text style={styles.userName}>{userName} 👋</Text>
             </View>
-            <View style={styles.monthlyGoal}>
-                <View style={styles.goalTextContainer}>
-                    <Text style={styles.goalText}>Monthly Goal</Text>
-                    <View style={styles.goalDetailsContainer}>
-                        <Text style={styles.goalNumber}>8,530</Text>
-                        <View style={styles.progressCircle}>
-                            <View style={styles.innerCircle}>
-                                <Text style={styles.progressText}>65%</Text>
-                            </View>
-                        </View>
-                    </View>
-                </View>
-                <View style={styles.chartContainer}>
-                    <View style={styles.chartPlaceholder}>
+            <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+              <Image
+                source={{uri: 'https://randomuser.me/api/portraits/men/1.jpg'}}
+                style={styles.profileImage}
+              />
+            </TouchableOpacity>
+          </View>
 
-                        <PieChart
-                            data={data}
-                            style={{ flex: 1 }}
-                            width={screenWidth - 50}
-                            height={200}  // Dynamic height based on data
-                            chartConfig={{
-                                backgroundColor: '#fff',
-                                backgroundGradientFrom: '#fff',
-                                backgroundGradientTo: '#fff',
-                                decimalPlaces: 1,
-                                color: (opacity = 1) => `rgba(34, 193, 195, ${opacity})`,
-                                labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                                // style: { borderRadius: 16 },
-                                propsForDots: { r: '0' }, // Hide default dots
-                                scrollableDotFill: (opacity = 1) => `rgba(34, 193, 184, ${opacity})`,
+          {/* Water Tracking */}
+          <View style={styles.waterSection}>
+            <Text style={styles.sectionTitle}>Daily Water Intake</Text>
+            <ProgressBar
+              progress={waterProgress}
+              color="#3498db"
+              style={styles.progressBar}
+            />
+            <Text style={styles.progressText}>
+              {Math.round(waterProgress * 100)}% Complete
+            </Text>
+          </View>
 
-                            }}
-                            accessor={["population"]}
-                            backgroundColor="transparent"
-                            absolute
+          {/* Today's Overview */}
+          <View style={[styles.progressSection, {padding: 15}]}>
+            <Text style={styles.sectionTitle}>Today's Overview</Text>
+            <PieChart
+              data={chartData}
+              width={screenWidth - 40}
+              height={220}
+              chartConfig={chartConfig}
+              accessor={'population'}
+              backgroundColor={'transparent'}
+              paddingLeft={'15'}
+              style={styles.chart}
+              absolute
+            />
+            <ProgressBar
+              progress={0.65}
+              color="#e74c3c"
+              style={[styles.progressBar, {marginTop: 10}]}
+            />
+            <Text style={styles.progressText}>65% Overall Progress</Text>
+          </View>
 
-                        />
+          {/* Weekly Progress */}
+          <View style={styles.progressSection}>
+            <WeeklyProgressTimeline
+              data={weeklyProgressData}
+              weeklyData={weeklyData}
+            />
+          </View>
 
-
-
-
-                    </View>
-                </View>
-            </View>
-
-            {/* Stats */}
-            <View style={styles.statsContainer}>
-                <View style={styles.statItem}>
-                    <Icon name="restaurant-outline" size={28} color="#f39c12" />
-                    <Text style={styles.statNumber}>15</Text>
-                    <Text style={styles.statLabel}>Food</Text>
-                </View>
-                <View style={styles.statItem}>
-                    <Icon name="walk-outline" size={28} color="#27ae60" />
-                    <Text style={styles.statNumber}>685</Text>
-                    <Text style={styles.statLabel}>Walk</Text>
-                </View>
-                <View style={styles.statItem}>
-                    <Icon name="barbell-outline" size={28} color="#e74c3c" />
-                    <Text style={styles.statNumber}>12</Text>
-                    <Text style={styles.statLabel}>Exercise</Text>
-                </View>
-            </View>
-
-            {/* Weekly Goals */}
-            <View style={styles.weeklyGoalsContainer}>
-                <View style={styles.weeklyGoalsHeader}>
-                    <Text style={styles.weeklyGoalsTitle}>Weekly Goals</Text>
-                    <TouchableOpacity>
-                        <Text style={styles.checkReports}>Check Reports</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.weeklyGoalsProgress}>
-                    <Text style={styles.completedGoals}>5/7</Text>
-                    <Text style={styles.completedLabel}>Completed</Text>
-                </View>
-                <View style={styles.weeklyGoalsDays}>
-                    {weeklyGoals.map((day, index) => (
-                        <View key={index} style={[styles.dayCircle, day ? styles.completed : styles.notCompleted]}>
-                            <Text style={styles.dayText}>{"SMTWTFS"[index]}</Text>
-                        </View>
-                    ))}
-                </View>
-            </View>
-
-            {/* Activity Cards */}
-            <View style={styles.activityContainer}>
-                {activityData.map((activity, index) => (
-                    <View key={index} style={styles.activity}>
-                        <View style={styles.activityHeader}>
-                            {/* <Icon name={activity.icon} size={28} color={activity.iconColor} /> */}
-                            <Text style={styles.activityTitle}>{activity.title}</Text>
-                            <Text style={styles.activityTime}>{activity.time}</Text>
-                        </View>
-                        <View style={styles.activityDetails}>
-                            {activity.details.map((detail, index) => (
-                                <View key={index} style={styles.activityDetail}>
-                                    <View style={styles.detailTab}>
-                                        <Icon name={detail.icon} size={18} color="#333" style={styles.detailIcon} />
-                                        <Text style={styles.activityDetailText}>{detail.label}</Text>
-                                    </View>
-                                </View>
-                            ))}
-                        </View>
-                    </View>
-                ))}
-            </View>
-            <View style={{ marginBottom: 55 }}></View>
-
-        </ScrollView>
-    );
+          {/* Monthly Progress */}
+          <View style={[styles.progressSection, {padding: 15}]}>
+            <Text style={styles.sectionTitle}>Monthly Progress</Text>
+            <LineChart
+              data={{
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                datasets: [{data: monthlyProgress}],
+              }}
+              width={340}
+              height={220}
+              chartConfig={chartConfig}
+              style={styles.chart}
+              withInnerLines={false}
+            />
+          </View>
+        </View>
+      }
+      data={taskData}
+      keyExtractor={item => item.id}
+      renderItem={({item}) => (
+        <View style={styles.taskCard}>
+          <View style={styles.taskHeader}>
+            <Icon
+              name={item.icon}
+              size={28}
+              color={item.color}
+              style={styles.taskIcon}
+            />
+            <Text style={styles.taskTitle}>{item.title}</Text>
+          </View>
+          <Text style={styles.taskDescription}>{item.description}</Text>
+          <ProgressBar
+            progress={item.progress}
+            color={item.color}
+            style={styles.taskProgressBar}
+          />
+          <Text style={styles.taskProgressText}>
+            {Math.round(item.progress * 100)}% Complete
+          </Text>
+          <Text style={styles.taskDate}>Due Date: {item.lastDate}</Text>
+        </View>
+      )}
+    />
+  );
 };
 
-// Styles
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#f5f5f5',
-        paddingHorizontal: 15,
-    },
-    headerContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-        paddingVertical: 15,
-        backgroundColor: '#f7f7f7', // Light background for contrast
-        borderRadius: 8,
-        borderBottomColor: '#ddd',
-    },
-    greetingSection: {
-        flex: 1,
-    },
-    greeting: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: '#333',
-    },
-    userName: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        color: '#3498db',
-    },
-    profileSection: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    notificationIcon: {
-        marginRight: 15,
-    },
-    profileImage: {
-        width: 45,
-        height: 45,
-        borderRadius: 22.5,
-        borderWidth: 2,
-        borderColor: '#3498db',
-        shadowColor: '#000',
-        shadowOpacity: 0.2,
-        shadowRadius: 5,
-        elevation: 3,
-    },
-
-    monthlyGoal: {
-        marginBottom: 20,
-        backgroundColor: '#fff',
-        paddingVertical: 25,
-        paddingHorizontal: 10,
-        borderRadius: 15,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
-        elevation: 4,
-    },
-    goalTextContainer: {
-        marginBottom: 15,
-    },
-    goalText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#333',
-    },
-    goalDetailsContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    goalNumber: {
-        fontSize: 48,
-        fontWeight: 'bold',
-        color: '#333',
-    },
-    progressCircle: {
-        width: 90,
-        height: 90,
-        borderRadius: 45,
-        borderWidth: 6,
-        borderColor: '#ddd',
-        justifyContent: 'center',
-        alignItems: 'center',
-        left: -28,
-    },
-    innerCircle: {
-        width: 80,
-        height: 80,
-        borderRadius: 40,
-        borderWidth: 6,
-        borderColor: '#3498db',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    progressText: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#3498db',
-    },
-    chartContainer: {
-        flex: 1,
-        marginTop: 10,
-        backgroundColor: '#fff',
-        padding: 8,
-        borderRadius: 15,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    chartPlaceholder: {
-        flex: 1,
-        backgroundColor: '#f0f0f0',
-        borderRadius: 10,
-    },
-    statsContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 20,
-        backgroundColor: '#fff',
-        paddingVertical: 20,
-        paddingHorizontal: 15,
-        borderRadius: 15,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
-        elevation: 4,
-    },
-    statItem: {
-        alignItems: 'center',
-    },
-    statNumber: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        color: '#333',
-    },
-    statLabel: {
-        color: '#777',
-        fontSize: 14,
-    },
-    weeklyGoalsContainer: {
-        marginBottom: 20,
-        backgroundColor: '#fff',
-        paddingVertical: 20,
-        paddingHorizontal: 15,
-        borderRadius: 15,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
-        elevation: 4,
-    },
-    weeklyGoalsHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 10,
-    },
-    weeklyGoalsTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#333',
-    },
-    checkReports: {
-        color: '#3498db',
-        fontSize: 16,
-    },
-    weeklyGoalsProgress: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 10,
-    },
-    completedGoals: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#3498db',
-    },
-    completedLabel: {
-        color: '#777',
-        fontSize: 16,
-    },
-    weeklyGoalsDays: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    dayCircle: {
-        width: 30,
-        height: 30,
-        borderRadius: 15,
-        justifyContent: 'center',
-        alignItems: 'center',
-        margin: 5,
-    },
-    completed: {
-        backgroundColor: '#27ae60',
-    },
-    notCompleted: {
-        backgroundColor: '#ccc',
-    },
-    dayText: {
-        color: '#fff',
-        fontWeight: 'bold',
-    },
-    activityContainer: {
-        marginBottom: 20,
-    },
-    activity: {
-        marginBottom: 20,
-        backgroundColor: '#fff',
-        paddingVertical: 15,
-        paddingHorizontal: 20,
-        borderRadius: 15,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
-        elevation: 4,
-    },
-    activityHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 10,
-    },
-    activityTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#333',
-    },
-    activityTime: {
-        color: '#777',
-        fontSize: 14,
-    },
-    activityDetails: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-    },
-    activityDetail: {
-        width: '48%',
-        marginBottom: 10,
-        alignItems: 'center',
-    },
-    detailTab: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#f5f5f5',
-        width: '90%',
-        padding: 8,
-        borderRadius: 8,
-    },
-    detailIcon: {
-        marginRight: 8,
-    },
-    activityDetailText: {
-        fontSize: 14,
-        color: '#333',
-    },
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  greeting: {fontSize: 18, color: '#333'},
+  userName: {fontSize: 22, fontWeight: 'bold', color: '#3498db'},
+  profileImage: {width: 45, height: 45, borderRadius: 22.5},
+  waterSection: {
+    marginBottom: 20,
+    padding: 15,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    borderRadius: 15,
+  },
+  progressSection: {
+    marginBottom: 20,
+    // padding: 15,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    borderRadius: 15,
+  },
+  chart: {marginVertical: 10},
+  progressBar: {height: 8, borderRadius: 4},
+  progressText: {fontSize: 12, color: '#555', alignSelf: 'flex-end'},
+  taskCard: {
+    marginBottom: 15,
+    padding: 15,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    borderRadius: 10,
+  },
+  taskHeader: {flexDirection: 'row', alignItems: 'center', marginBottom: 10},
+  taskIcon: {marginRight: 10},
+  taskTitle: {fontSize: 18, fontWeight: 'bold', color: '#333'},
+  taskDescription: {fontSize: 14, color: '#777', marginBottom: 10},
+  taskProgressBar: {height: 8, borderRadius: 4, marginVertical: 10},
+  taskProgressText: {fontSize: 12, color: '#555', alignSelf: 'flex-end'},
+  taskDate: {fontSize: 12, color: '#888', marginTop: 5},
 });
 
 export default HomeScreen;
